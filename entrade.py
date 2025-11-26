@@ -32,7 +32,7 @@ class Broker:
             self.investorId = data['entrade-auth']['account']['no']
             self.investorAccountId = data['entrade-auth']['account']['account-id']
         self.do_date = ''
-        self.number_of_stocks = 0
+        self.opened_qty = 0
         self.entry_price = 0
         self.exit_price = 0
         self.entry_time = ''
@@ -70,7 +70,7 @@ class Broker:
     def open_long_deal(self, price, order_type="LO"):
         self.trigger_before()
         if self.mode == 'live':
-            self.number_of_stocks = self.qty
+            self.opened_qty = self.qty
             self.entry_price = price
             self.is_long_open = True
             self.history.append('(Long) with price {} at {}'.format(price, self.do_date))
@@ -81,7 +81,7 @@ class Broker:
     def open_short_deal(self, price, order_type="LO"):
         self.trigger_before()
         if self.mode == 'live':
-            self.number_of_stocks = self.qty
+            self.opened_qty = self.qty
             self.entry_price = price
             self.is_short_open = True
             self.history.append('(Short) with price {} at {}'.format(price, self.do_date))
@@ -93,7 +93,7 @@ class Broker:
         self.trigger_before()
         # Close all open deal
         if self.has_opened_deal():
-            self.qty = self.number_of_stocks
+            self.qty = self.opened_qty
             if self.is_long_open:
                 self.close_long_deal(expected_price, "MTL")
             elif self.is_short_open:
@@ -107,7 +107,7 @@ class Broker:
         profit = price - self.entry_price - TRADING_FEE
         profit = round(profit, 1)
         self.profit = profit
-        self.number_of_stocks = 0
+        self.opened_qty = 0
         self.is_long_open = False
         if self.mode == 'live':
             self.history.append(
@@ -130,7 +130,7 @@ class Broker:
         profit = self.entry_price - price - TRADING_FEE
         profit = round(profit, 1)
         self.profit = profit
-        self.number_of_stocks = 0
+        self.opened_qty = 0
         self.is_short_open = False
         if self.mode == 'live':
             self.history.append(
@@ -221,7 +221,7 @@ class Broker:
             for deal in data:
                 self.number_of_deal += 1
                 if deal['status'] == 'ACTIVE' and deal['averageCostPrice']:
-                    self.number_of_stocks = int(deal['openQuantity'])
+                    self.opened_qty = int(deal['openQuantity'])
                     self.entry_price = deal['averageCostPrice']
                     self.deal_id = deal['id']
                     entry_time = pd.to_datetime(deal['modifiedDate']) + pd.DateOffset(hours=7)
@@ -233,7 +233,7 @@ class Broker:
                         self.is_short_open = True
                     break
         else:
-            self.number_of_stocks = 0
+            self.opened_qty = 0
             self.is_long_open = False
             self.is_short_open = False
             self.entry_time = ''
@@ -293,20 +293,20 @@ class Broker:
             exit()
 
     def has_opened_deal(self):
-        return True if self.number_of_stocks > 0 else False
+        return True if self.opened_qty > 0 else False
 
     def trigger_before(self):
         if not self.trigger:
             return
         order_type = "Long" if self.is_long_open else ("Short" if self.is_short_open else "None")
-        msg = f"Before. Ordered qty: {self.number_of_stocks}, order_type: {order_type}, " \
+        msg = f"Before. Ordered qty: {self.opened_qty}, order_type: {order_type}, " \
               f"entry_price: {self.entry_price}, entry_time: {self.entry_time}"
         self.log(msg)
 
     def trigger_after(self):
         if not self.trigger:
             return
-        msg = f"After. Ordered qty: {self.number_of_stocks}."
+        msg = f"After. Ordered qty: {self.opened_qty}."
         self.log(msg)
 
     def log(self, msg):
