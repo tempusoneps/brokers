@@ -75,7 +75,10 @@ class Broker:
             self.is_long_open = True
             self.history.append('(Long) with price {} at {}'.format(price, self.do_date))
         deal_type = LONG_DEAL_TYPE
-        self.open_deal(deal_type, price, order_type)
+        try:
+            self.open_deal(deal_type, price, order_type)
+        except Exception as e:
+            print(f"Error opening long deal: {e}")
         self.trigger_after()
 
     def open_short_deal(self, price, order_type="LO"):
@@ -86,7 +89,10 @@ class Broker:
             self.is_short_open = True
             self.history.append('(Short) with price {} at {}'.format(price, self.do_date))
         deal_type = SHORT_DEAL_TYPE
-        self.open_deal(deal_type, price, order_type)
+        try:
+            self.open_deal(deal_type, price, order_type)
+        except Exception as e:
+            print(f"Error opening short deal: {e}")
         self.trigger_after()
 
     def close_all_open_deal(self, expected_price):
@@ -121,7 +127,10 @@ class Broker:
             self._trades.loc[len(self._trades)] = [self.entry_time, self.entry_price, self.do_date, price, "Long",
                                                    profit]
         deal_type = SHORT_DEAL_TYPE
-        self.open_deal(deal_type, price, order_type)
+        try:
+            self.open_deal(deal_type, price, order_type)
+        except Exception as e:
+            print(f"Error closing long deal (opening short): {e}")
         self.trigger_after()
 
     def close_short_deal(self, price, order_type="LO"):
@@ -144,7 +153,10 @@ class Broker:
             self._trades.loc[len(self._trades)] = [self.entry_time, self.entry_price, self.do_date, price, "Short",
                                                    profit]
         deal_type = LONG_DEAL_TYPE
-        self.open_deal(deal_type, price, order_type)
+        try:
+            self.open_deal(deal_type, price, order_type)
+        except Exception as e:
+            print(f"Error closing short deal (opening long): {e}")
         self.trigger_after()
 
     def open_deal(self, deal_type, price, order_type="LO"):

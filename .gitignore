@@ -10,4 +10,4 @@ email_otp.txt
 jwt_token.txt
 otp.txt
 trading_token.txt
- **/__pycache__/
+**/__pycache__/
