@@ -2,6 +2,7 @@
 venv
 .ipynb_checkpoints
 .env
+.venv
 .DS_store
 .vscode
 *token.json

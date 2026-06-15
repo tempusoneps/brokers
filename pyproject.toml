@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vnbrokers"
+version = "0.1.0"
+description = "Vietnam Brokers Python SDK (DNSE, Entrade)"
+readme = "README.md"
+requires-python = ">=3.12"
+license = {text = "MIT"}
+authors = [
+  {name = "TempusOnePs Team"}
+]
+dependencies = [
+    "google-api-core==2.15.0",
+    "google-api-python-client==2.110.0",
+    "google-auth==2.25.2",
+    "google-auth-httplib2==0.1.1",
+    "googleapis-common-protos==1.62.0",
+    "google-auth-oauthlib==1.2.1",
+    "oauthlib==3.2.2",
+    "requests-oauthlib==2.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ipykernel",
+]
+
+[tool.uv]
+package = false
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["dnse*", "entrade*"]
+namespaces = true
