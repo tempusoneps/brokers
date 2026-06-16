@@ -31,6 +31,6 @@ dev = [
 ]
 
 [tool.setuptools.packages.find]
-where = ["."]
+where = ["src"]
 include = ["dnse*", "entrade*"]
 namespaces = true
