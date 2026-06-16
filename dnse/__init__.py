@@ -17,14 +17,14 @@ class Broker:
         self.symbol = symbol
         self.loan_package_id = DEFAULT_DNSE_LOAN_PACKAGE_ID
         current_folder = str(Path(__file__).parent)
-        f = open(current_folder + "/dnse/auth/jwt_token.txt", "r")
+        f = open(current_folder + "/auth/jwt_token.txt", "r")
         bearer_token = f.read()
         f.close()
         if not bearer_token:
             raise Exception("Sorry, The bearer token file for Broker has problem!")
         else:
             self.bearer_token = bearer_token
-        fx = open(current_folder + "/dnse/auth/trading_token.txt", "r")
+        fx = open(current_folder + "/auth/trading_token.txt", "r")
         trading_token = fx.read()
         fx.close()
         if not trading_token:
@@ -32,7 +32,7 @@ class Broker:
         else:
             self.trading_token = trading_token
 
-        fa = open(current_folder + "/dnse/auth/credentials.json", "r")
+        fa = open(current_folder + "/auth/credentials.json", "r")
         data = json.loads(fa.read())
         fa.close()
         if not data['dnse-auth']['account']['no']:
@@ -103,7 +103,6 @@ class Broker:
 
     def close_all_open_deal(self, expected_price):
         self.trigger_before()
-        # Close all open deal
         if self.has_opened_deal():
             self.qty = self.number_of_stocks
             if self.is_long_open:
@@ -184,9 +183,7 @@ class Broker:
 
         res = requests.post(url, json=data, headers=header)
         if res.status_code != 200:
-            # print(data)
             raise Exception(res.json())
-        # print(f"Open deal status: {res.status_code}. ")
 
     def set_risk_reward(self):
         deal_id = self.deal_id

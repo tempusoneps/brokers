@@ -16,14 +16,14 @@ class Broker:
         self.symbol = symbol
         self.bankMarginPortfolioId = BANK_MARGIN_PORTFOLIO_ID
         current_folder = str(Path(__file__).parent)
-        f = open(current_folder + "/entrade/auth/jwt_token.txt", "r")
+        f = open(current_folder + "/auth/jwt_token.txt", "r")
         bearer_token = f.read()
         f.close()
         if not bearer_token:
             raise Exception("Sorry, The bearer token file for Broker has problem!")
         else:
             self.bearer_token = bearer_token
-        fa = open(current_folder + "/entrade/auth/credentials.json", "r")
+        fa = open(current_folder + "/auth/credentials.json", "r")
         data = json.loads(fa.read())
         fa.close()
         if not data['entrade-auth']['account']['no']:
@@ -97,7 +97,6 @@ class Broker:
 
     def close_all_open_deal(self, expected_price):
         self.trigger_before()
-        # Close all open deal
         if self.has_opened_deal():
             self.qty = self.opened_qty
             if self.is_long_open:
@@ -182,9 +181,7 @@ class Broker:
 
         res = requests.post(url, json=data, headers=header)
         if res.status_code != 200:
-            # print(data)
             raise Exception(res.json())
-        # print(f"Open deal status: {res.status_code}. ")
 
     def close_all_orders(self):
         url = "https://services.entrade.com.vn/entrade-api/derivative/orders?startIndex=1&endIndex=100&investorId=" + self.investorId
@@ -252,9 +249,6 @@ class Broker:
 
     def set_risk_reward(self):
         return
-        # DNSE set stoploss by account
-        # self.set_risk()
-        # self.set_reward()
 
     def set_risk(self):
         deal_id = self.deal_id
