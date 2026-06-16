@@ -1,7 +1,6 @@
 import pandas as pd
 from pathlib import Path
 import requests
-import json
 
 USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'
 BANK_MARGIN_PORTFOLIO_ID = 123
@@ -12,25 +11,14 @@ TRADING_FEE = 0.7
 
 
 class Broker:
-    def __init__(self, symbol):
+    def __init__(self, symbol, investor_id, investor_account_id):
         self.symbol = symbol
         self.bankMarginPortfolioId = BANK_MARGIN_PORTFOLIO_ID
+        self.investorId = investor_id
+        self.investorAccountId = investor_account_id
         current_folder = str(Path(__file__).parent)
-        f = open(current_folder + "/auth/jwt_token.txt", "r")
-        bearer_token = f.read()
-        f.close()
-        if not bearer_token:
-            raise Exception("Sorry, The bearer token file for Broker has problem!")
-        else:
-            self.bearer_token = bearer_token
-        fa = open(current_folder + "/auth/credentials.json", "r")
-        data = json.loads(fa.read())
-        fa.close()
-        if not data['entrade-auth']['account']['no']:
-            raise Exception("Sorry, the DNSE account no not found!")
-        else:
-            self.investorId = data['entrade-auth']['account']['no']
-            self.investorAccountId = data['entrade-auth']['account']['account-id']
+        with open(current_folder + "/auth/jwt_token.txt", "r") as f:
+            self.bearer_token = f.read().strip()
         self.do_date = ''
         self.opened_qty = 0
         self.entry_price = 0

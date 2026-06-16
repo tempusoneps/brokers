@@ -1,7 +1,6 @@
 import pandas as pd
 from pathlib import Path
 import requests
-import json
 
 USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'
 DEFAULT_DNSE_LOAN_PACKAGE_ID = 1306
@@ -13,32 +12,15 @@ TRADING_FEE = 0.3
 
 class Broker:
 
-    def __init__(self, symbol):
+    def __init__(self, symbol, account_no):
         self.symbol = symbol
         self.loan_package_id = DEFAULT_DNSE_LOAN_PACKAGE_ID
+        self.account_no = account_no
         current_folder = str(Path(__file__).parent)
-        f = open(current_folder + "/auth/jwt_token.txt", "r")
-        bearer_token = f.read()
-        f.close()
-        if not bearer_token:
-            raise Exception("Sorry, The bearer token file for Broker has problem!")
-        else:
-            self.bearer_token = bearer_token
-        fx = open(current_folder + "/auth/trading_token.txt", "r")
-        trading_token = fx.read()
-        fx.close()
-        if not trading_token:
-            raise Exception("Sorry, The trading token file for Broker has problem!")
-        else:
-            self.trading_token = trading_token
-
-        fa = open(current_folder + "/auth/credentials.json", "r")
-        data = json.loads(fa.read())
-        fa.close()
-        if not data['dnse-auth']['account']['no']:
-            raise Exception("Sorry, the DNSE account no not found!")
-        else:
-            self.account_no = data['dnse-auth']['account']['no']
+        with open(current_folder + "/auth/jwt_token.txt", "r") as f:
+            self.bearer_token = f.read().strip()
+        with open(current_folder + "/auth/trading_token.txt", "r") as f:
+            self.trading_token = f.read().strip()
 
         self.do_date = ''
         self.number_of_stocks = 0
