@@ -16,14 +16,10 @@ uv add git+https://github.com/tempusoneps/vnbrokers.git@develop
 
 ## Cấu hình
 
-CLI không còn đọc `credentials.json` của broker nữa. Bạn truyền thẳng `--username` và `--password` khi chạy `vnbrokers token`.
-
 File cần cho DNSE Gmail OAuth:
 
 - `credentials.json`: OAuth client secrets tải từ Google Cloud Console, bạn truyền vào khi chạy `dnse-gmail-quickstart`
 - `src/vnbrokers/dnse/gmail/token.json`: file token được tạo sau lần authorize đầu tiên
-
-Nếu chưa có `credentials.json` cho Gmail, hãy tạo OAuth Client ID kiểu Desktop app trong Google Cloud Console rồi tải JSON về.
 
 ## CLI
 
@@ -43,7 +39,7 @@ vnbrokers token --broker entrade --username YOUR_USERNAME --password YOUR_PASSWO
 vnbrokers dnse-gmail-quickstart --credentials ./credentials.json -o ./src/vnbrokers/dnse/gmail/token.json
 ```
 
-Mặc định nếu không truyền `-o`:
+Mặc định nếu không truyền `-o`, CLI sẽ ghi token ra:
 
 - DNSE JWT token: `src/vnbrokers/dnse/auth/jwt_token.txt`
 - DNSE trading token: `src/vnbrokers/dnse/auth/trading_token.txt`
@@ -52,6 +48,8 @@ Mặc định nếu không truyền `-o`:
 
 Nếu truyền `-o` cho `vnbrokers token --broker dnse`, file JWT sẽ được lưu đúng path bạn chọn và trading token sẽ được lưu cùng thư mục đó.
 
+SDK không tự đọc các file token này. Bạn đọc token từ nơi đã lưu và truyền vào `Broker(...)`.
+
 ## Sử dụng
 
 ### DNSE
@@ -59,9 +57,14 @@ Nếu truyền `-o` cho `vnbrokers token --broker dnse`, file JWT sẽ được 
 ```python
 from vnbrokers.dnse import Broker
 
+bearer_token = open("./dnse_token.txt").read().strip()
+trading_token = open("./trading_token.txt").read().strip()
+
 broker = Broker(
     symbol="VN30F1M",
     account_no="00010011111",
+    bearer_token=bearer_token,
+    trading_token=trading_token,
 )
 broker.set_qty(1)
 broker.open_long_deal(1200.0)
@@ -72,9 +75,13 @@ broker.open_long_deal(1200.0)
 ```python
 from vnbrokers.entrade import Broker
 
+bearer_token = open("./entrade_token.txt").read().strip()
+
 broker = Broker(
     symbol="VN30F1M",
     investor_id="00010011111",
+    investor_account_id="00010011112",
+    bearer_token=bearer_token,
 )
 broker.set_qty(1)
 broker.open_long_deal(1200.0)
@@ -84,7 +91,7 @@ broker.open_long_deal(1200.0)
 
 1. Chạy `vnbrokers dnse-gmail-quickstart --credentials ./credentials.json` một lần để authorize Gmail và tạo `token.json`.
 2. Chạy `vnbrokers token --broker dnse --username ... --password ...` để sinh JWT và trading token.
-3. SDK DNSE đọc token từ `src/vnbrokers/dnse/auth/`.
+3. Đọc token đã sinh và truyền vào `Broker(...)`.
 
 ## Brokers được hỗ trợ
 

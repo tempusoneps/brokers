@@ -1,5 +1,4 @@
 import pandas as pd
-from pathlib import Path
 import requests
 
 USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36'
@@ -11,14 +10,12 @@ TRADING_FEE = 0.7
 
 
 class Broker:
-    def __init__(self, symbol, investor_id, investor_account_id):
+    def __init__(self, symbol, investor_id, investor_account_id, bearer_token, bank_margin_portfolio_id=None):
         self.symbol = symbol
-        self.bankMarginPortfolioId = BANK_MARGIN_PORTFOLIO_ID
+        self.bankMarginPortfolioId = bank_margin_portfolio_id or BANK_MARGIN_PORTFOLIO_ID
         self.investorId = investor_id
         self.investorAccountId = investor_account_id
-        current_folder = str(Path(__file__).parent)
-        with open(current_folder + "/auth/jwt_token.txt", "r") as f:
-            self.bearer_token = f.read().strip()
+        self.bearer_token = bearer_token
         self.do_date = ''
         self.opened_qty = 0
         self.entry_price = 0
