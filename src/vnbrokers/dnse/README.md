@@ -8,11 +8,6 @@ https://developers.google.com/gmail/api/guides
 Read DNSE Lightspeed API
 https://hdsd.dnse.com.vn/san-pham-dich-vu/lightspeed-api/ii.-trading-api
 
-## setup cron
-crontab -e
-add
-40 8 * * 1,2,3,4,5 bash /path/to/vnbrokers/src/vnbrokers/dnse/daily_token.sh > null
-
 ## Use
 from vnbrokers.dnse import Broker
 

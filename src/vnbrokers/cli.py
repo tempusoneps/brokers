@@ -91,14 +91,21 @@ def token(broker, username, password, output):
 
 @cli.command('dnse-gmail-quickstart')
 @click.option(
+    '--credentials',
+    '-c',
+    type=click.Path(path_type=Path, dir_okay=False, exists=True),
+    required=True,
+    help='Path to Gmail OAuth client secrets JSON.',
+)
+@click.option(
     '--output',
     '-o',
     type=click.Path(path_type=Path, dir_okay=False),
     default=None,
     help='Path to save the extracted OTP.',
 )
-def dnse_gmail_quickstart(output):
-    """Fetch the latest DNSE OTP from Gmail and save it to a file."""
+def dnse_gmail_quickstart(credentials, output):
+    """Authorize Gmail and save token.json."""
     from vnbrokers.dnse.gmail.quickstart import run
 
-    run(output)
+    run(credentials, output)
