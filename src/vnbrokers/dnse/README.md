@@ -11,10 +11,10 @@ https://hdsd.dnse.com.vn/san-pham-dich-vu/lightspeed-api/ii.-trading-api
 ## setup cron
 crontab -e
 add
-40 8 * * 1,2,3,4,5 bash /home//algo-stocks/brokers/dnse/daily_token.sh > null
+40 8 * * 1,2,3,4,5 bash /path/to/vnbrokers/src/vnbrokers/dnse/daily_token.sh > null
 
 ## Use
-from brokers.dnse import Broker
+from vnbrokers.dnse import Broker
 
 if __name__ == "__main__":
     ticker = "VN30F2503"

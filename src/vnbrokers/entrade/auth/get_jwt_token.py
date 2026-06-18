@@ -1,7 +1,12 @@
 import requests
 from pathlib import Path
 import json
-from telegram_api import send_telegram_message
+
+try:
+    from telegram_api import send_telegram_message
+except ImportError:
+    def send_telegram_message(*args, **kwargs):
+        return None
 
 HEADERS = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36', 'ContentType': 'application/json'}
 ENTRADE_LOGIN_URL = 'https://services.entrade.com.vn/entrade-api/v2/auth'

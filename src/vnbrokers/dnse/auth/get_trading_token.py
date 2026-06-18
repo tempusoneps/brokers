@@ -1,6 +1,11 @@
 import requests
 from pathlib import Path
-from telegram_api import send_telegram_message
+
+try:
+    from telegram_api import send_telegram_message
+except ImportError:
+    def send_telegram_message(*args, **kwargs):
+        return None
 
 DNSE_GET_TRADING_TOKEN_URL = 'https://services.entrade.com.vn/dnse-order-service/trading-token'
 

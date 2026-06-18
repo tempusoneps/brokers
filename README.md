@@ -18,7 +18,7 @@ uv add git+https://github.com/tempusoneps/vnbrokers.git@develop
 
 Mỗi broker cần file `credentials.json` và `jwt_token.txt` trong thư mục `auth/` tương ứng.
 
-**DNSE** — `src/dnse/auth/credentials.json`:
+**DNSE** — `src/vnbrokers/dnse/auth/credentials.json`:
 
 ```json
 {
@@ -34,7 +34,7 @@ Mỗi broker cần file `credentials.json` và `jwt_token.txt` trong thư mục 
 }
 ```
 
-**Entrade** — `src/entrade/auth/credentials.json`:
+**Entrade** — `src/vnbrokers/entrade/auth/credentials.json`:
 
 ```json
 {
@@ -55,12 +55,17 @@ Mỗi broker cần file `credentials.json` và `jwt_token.txt` trong thư mục 
 Sinh token trước khi dùng SDK:
 
 ```bash
-# JWT token
+# DNSE: sinh luôn JWT + trading token, tự lấy OTP từ Gmail
 vnbrokers token --broker dnse
-vnbrokers token --broker entrade
+vnbrokers token --broker dnse -o ./dnse_token.txt
 
-# Trading token DNSE (yêu cầu nhập OTP qua email)
-vnbrokers trading-token
+# Entrade: chỉ sinh JWT token
+vnbrokers token --broker entrade
+vnbrokers token --broker entrade -o ./entrade_token.txt
+
+# DNSE Gmail OAuth helper: chỉ authorize Gmail và tạo token.json
+vnbrokers dnse-gmail-quickstart
+vnbrokers dnse-gmail-quickstart -o ./token.json
 ```
 
 ## Sử dụng
@@ -68,7 +73,7 @@ vnbrokers trading-token
 ### DNSE
 
 ```python
-from dnse import Broker
+from vnbrokers.dnse import Broker
 
 broker = Broker(
     symbol="VN30F1M",
@@ -81,7 +86,7 @@ broker.open_long_deal(1200.0)
 ### Entrade
 
 ```python
-from entrade import Broker
+from vnbrokers.entrade import Broker
 
 broker = Broker(
     symbol="VN30F1M",
